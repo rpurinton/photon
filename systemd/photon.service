@@ -1,12 +1,12 @@
 [Unit]
 Description=Photon Webserver
 After=network.target
-Wants=photon@81 photon@82 photon@83 photon@84 photon@85 photon@86 photon@87 photon@88
+Wants=photon@81 photon@82 photon@83 photon@84
 
 [Service]
-ExecStart=/usr/bin/systemctl start photon@81 && /usr/bin/systemctl start photon@82 && /usr/bin/systemctl start photon@83 && /usr/bin/systemctl start photon@84 && /usr/bin/systemctl start photon@85 && /usr/bin/systemctl start photon@86 && /usr/bin/systemctl start photon@87 && /usr/bin/systemctl start photon@88
-ExecStop=/usr/bin/systemctl stop photon@81 && /usr/bin/systemctl stop photon@82 && /usr/bin/systemctl stop photon@83 && /usr/bin/systemctl stop photon@84 && /usr/bin/systemctl stop photon@85 && /usr/bin/systemctl stop photon@86 && /usr/bin/systemctl stop photon@87 && /usr/bin/systemctl stop photon@88
-ExecReload=/usr/bin/systemctl reload photon@81 && /usr/bin/systemctl reload photon@82 && /usr/bin/systemctl reload photon@83 && /usr/bin/systemctl reload photon@84 && /usr/bin/systemctl reload photon@85 && /usr/bin/systemctl reload photon@86 && /usr/bin/systemctl reload photon@87 && /usr/bin/systemctl reload photon@88
+ExecStart=/usr/bin/systemctl start photon@81 && /usr/bin/systemctl start photon@82 && /usr/bin/systemctl start photon@83 && /usr/bin/systemctl start photon@84
+ExecStop=/usr/bin/systemctl stop photon@81 && /usr/bin/systemctl stop photon@82 && /usr/bin/systemctl stop photon@83 && /usr/bin/systemctl stop photon@84
+ExecReload=/usr/bin/systemctl reload photon@81 && /usr/bin/systemctl reload photon@82 && /usr/bin/systemctl reload photon@83 && /usr/bin/systemctl reload photon@84
 Restart=always
 type=oneshot
 RemainAfterExit=yes
