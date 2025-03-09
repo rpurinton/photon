@@ -18,7 +18,7 @@ const IDLE_TIMEOUT_MS = 55 * 1000;
 function handleRequest(req, res) {
     //console.log("Handling request for:", req.url);
     req.socket.setTimeout(IDLE_TIMEOUT_MS, () => {
-        //logError(`Idle timeout for ${req.socket.remoteAddress}`);
+        logError(`Idle timeout for ${req.socket.remoteAddress}`);
         req.destroy();
     });
 
@@ -82,15 +82,24 @@ function handleRequest(req, res) {
 
 // Serve a file: if PHP, execute it; otherwise stream it.
 function serveFile(filePath, req, res, startTime) {
-    // ...existing code...
+    //console.log("Serving file:", filePath);
+    if (path.basename(filePath).startsWith(".")) {
+        //console.log("Hidden file, not serving:", filePath);
+        sendError(req, res, 404, "Not Found");
+        logAccess(formatAccessLog(req, res.statusCode, 0, startTime));
+        return;
+    }
+
     const ext = path.extname(filePath).toLowerCase();
     if (ext === ".php") {
-        // ...existing code for PHP...
+        //console.log("Executing PHP file:", filePath);
+        executePhp(filePath, req, res, startTime);
     } else {
-        // Streaming non-PHP file.
+        //console.log("Streaming file:", filePath);
         const stream = fs.createReadStream(filePath);
         stream.on("open", () => {
-            // Set basic content type.
+            //console.log("File stream opened:", filePath);
+            // Set a basic content type.
             if (!res.getHeader("Content-Type")) {
                 if (ext === ".html" || ext === ".htm") {
                     res.setHeader("Content-Type", "text/html");
@@ -102,15 +111,15 @@ function serveFile(filePath, req, res, startTime) {
                     res.setHeader("Content-Type", "application/octet-stream");
                 }
             }
-            // Force connection close after response.
-            res.setHeader("Connection", "close");
             stream.pipe(res);
         });
         stream.on("error", (err) => {
+            //console.log("Error streaming file:", filePath, err);
             sendError(req, res, 500, "Internal Server Error");
             logError(`Error streaming file ${filePath}: ${err}`);
         });
         stream.on("end", () => {
+            //console.log("File stream ended:", filePath);
             logAccess(formatAccessLog(req, 200, 0, startTime));
         });
     }
