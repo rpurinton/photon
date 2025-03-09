@@ -42,6 +42,10 @@ function executePhp(filePath, req, res, startTime) {
     if (req.headers.authorization) {
         env.HTTP_AUTHORIZATION = req.headers.authorization;
     }
+    // Explicitly pass the cookie header if available.
+    if (req.headers.cookie) {
+        env.HTTP_COOKIE = req.headers.cookie;
+    }
 
     for (let header in req.headers) {
         const headerName = "HTTP_" + header.toUpperCase().replace(/-/g, "_");
@@ -73,7 +77,21 @@ function executePhp(filePath, req, res, startTime) {
                     if (parts.length >= 2) {
                         let hName = parts[0].trim();
                         let hValue = parts.slice(1).join(":").trim();
-                        res.setHeader(hName, hValue);
+                        // Handle multiple Set-Cookie headers properly:
+                        if (hName.toLowerCase() === "set-cookie") {
+                            let current = res.getHeader("Set-Cookie");
+                            if (current) {
+                                if (!Array.isArray(current)) {
+                                    current = [current];
+                                }
+                                current.push(hValue);
+                                res.setHeader("Set-Cookie", current);
+                            } else {
+                                res.setHeader("Set-Cookie", hValue);
+                            }
+                        } else {
+                            res.setHeader(hName, hValue);
+                        }
                     }
                 }
                 res.write(remaining);
