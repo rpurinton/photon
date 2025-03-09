@@ -17,8 +17,12 @@ function executePhp(filePath, req, res, startTime) {
     env.REQUEST_URI = req.url;
     env.PATH_INFO = req.url;
     env.SERVER_NAME = req.headers.host ? req.headers.host.split(":")[0] : "localhost";
-    env.SERVER_PORT = process.env.PHOTON_PORT || "80";
-    env.SERVER_PROTOCOL = "HTTP/1.1";
+
+    // Set HTTPS-related variables for PHP
+    env.HTTPS = "on";
+    env.SERVER_PORT = process.env.PHOTON_PORT || "443";
+    env.SERVER_PROTOCOL = "HTTPS/1.1";
+
     env.REDIRECT_STATUS = "200";
 
     env.HTTP_HOST = req.headers.host;
