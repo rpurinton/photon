@@ -6,7 +6,7 @@ After=network.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/bin/true
+ExecStart=/bin/systemctl start photon@81.service photon@82.service photon@83.service photon@84.service
 ExecReload=/bin/systemctl reload photon@81.service photon@82.service photon@83.service photon@84.service
 ExecStop=/bin/systemctl stop photon@81.service photon@82.service photon@83.service photon@84.service
 
