@@ -16,7 +16,7 @@ function executePhp(filePath, req, res, startTime) {
     env.SCRIPT_FILENAME = filePath;
     env.SCRIPT_NAME = req.url;
     env.SERVER_NAME = req.headers.host ? req.headers.host.split(":")[0] : "localhost";
-    env.SERVER_PORT = process.env.PORT || 80;
+    env.SERVER_PORT = process.env.PHOTON_PORT || 80;
     env.SERVER_PROTOCOL = "HTTP/1.1";
 
     // Copy request headers into the CGI environment.
@@ -41,7 +41,7 @@ function executePhp(filePath, req, res, startTime) {
             }
             if (headerEnd !== -1) {
                 const headerPart = headerBuffer.substring(0, headerEnd);
-                const remaining = headerBuffer.substring(headerEnd).replace(/^\r?\n/, "");
+                const remaining = headerBuffer.substring(headerEnd + 2).replace(/^\r?\n/, "");
                 const lines = headerPart.split(/\r?\n/);
                 for (let line of lines) {
                     let parts = line.split(":");
@@ -80,5 +80,6 @@ function executePhp(filePath, req, res, startTime) {
         }
     });
 }
+
 
 module.exports = { executePhp };
