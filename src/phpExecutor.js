@@ -78,7 +78,6 @@ function executePhp(filePath, req, res, startTime) {
                     if (parts.length >= 2) {
                         let hName = parts[0].trim();
                         let hValue = parts.slice(1).join(":").trim();
-                        // Handle multiple Set-Cookie headers properly:
                         if (hName.toLowerCase() === "set-cookie") {
                             let current = res.getHeader("Set-Cookie");
                             if (current) {
@@ -90,6 +89,10 @@ function executePhp(filePath, req, res, startTime) {
                             } else {
                                 res.setHeader("Set-Cookie", hValue);
                             }
+                        } else if (hName.toLowerCase() === "location") {
+                            // If a PHP redirect is issued, set status code accordingly.
+                            res.statusCode = 302;
+                            res.setHeader("Location", hValue);
                         } else {
                             res.setHeader(hName, hValue);
                         }
