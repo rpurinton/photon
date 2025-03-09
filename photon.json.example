@@ -1,12 +1,12 @@
 {
     "domains": [
         {
-            "domain": "example.com",
-            "home": "/var/www/example.com/"
-        },
-        {
-            "domain": "*.example.com",
-            "home": "/var/www/example.com/"
+            "domain": "example.com, *.example.com",
+            "home": "/var/www/example.com/",
+            "env": {
+                "VAR1": "value1",
+                "VAR2": "value2"
+            }
         }
     ]
 }
