@@ -9,7 +9,7 @@ const PHP_BIN = "/usr/bin/php"; // Change if needed
 // Execute the PHP file by spawning the PHP process.
 // Pipes request data into PHP and send the PHP output to the response.
 function executePhp(filePath, req, res, startTime) {
-    //console.log("Starting PHP execution for:", filePath);
+    console.log("Starting PHP execution for:", filePath);
 
     let env = Object.assign({}, process.env);
     env.REQUEST_METHOD = req.method;
@@ -21,7 +21,7 @@ function executePhp(filePath, req, res, startTime) {
     env.SERVER_PORT = process.env.PHOTON_PORT || 80;
     env.SERVER_PROTOCOL = "HTTP/1.1";
 
-    //console.log("Environment variables set:", env);
+    console.log("Environment variables set:", env);
 
     // Copy request headers into the CGI environment.
     for (let header in req.headers) {
@@ -29,7 +29,7 @@ function executePhp(filePath, req, res, startTime) {
         env[headerName] = req.headers[header];
     }
 
-    //console.log("Request headers copied to environment:", env);
+    console.log("Request headers copied to environment:", env);
 
     let php = spawn(PHP_BIN, [filePath], { env });
 
@@ -39,7 +39,7 @@ function executePhp(filePath, req, res, startTime) {
     let headersSent = false;
 
     php.stdout.on("data", (data) => {
-        //console.log("PHP stdout data received:", data.toString());
+        console.log("PHP stdout data received:", data.toString());
         if (!headersSent) {
             headerBuffer += data.toString();
             let headerEnd = headerBuffer.indexOf("\r\n\r\n");
@@ -56,12 +56,12 @@ function executePhp(filePath, req, res, startTime) {
                         let hName = parts[0].trim();
                         let hValue = parts.slice(1).join(":").trim();
                         res.setHeader(hName, hValue);
-                        //console.log(`Header set: ${hName} = ${hValue}`);
+                        console.log(`Header set: ${hName} = ${hValue}`);
                     }
                 }
                 res.write(remaining);
                 headersSent = true;
-                //console.log("Headers sent to response.");
+                console.log("Headers sent to response.");
             }
         } else {
             res.write(data);
@@ -69,25 +69,25 @@ function executePhp(filePath, req, res, startTime) {
     });
 
     php.stdout.on("end", () => {
-        //console.log("PHP stdout end.");
+        console.log("PHP stdout end.");
         res.end();
         logAccess(require("./utils").formatAccessLog(req, res.statusCode, 0, startTime));
     });
 
     php.stderr.on("data", (data) => {
-        //console.error(`PHP error (${filePath}): ${data}`);
+        console.error(`PHP error (${filePath}): ${data}`);
         logError(`PHP error (${filePath}): ${data}`);
     });
 
     php.on("error", (err) => {
-        //console.error(`Error executing PHP: ${err}`);
+        console.error(`Error executing PHP: ${err}`);
         const { sendError } = require("./utils");
         sendError(req, res, 500, "PHP Execution Error");
         logError(`Error executing PHP: ${err}`);
     });
 
     php.on("close", (code) => {
-        //console.log(`PHP process closed with code ${code}`);
+        console.log(`PHP process closed with code ${code}`);
         if (code !== 0) {
             logError(`PHP exited with code ${code} for ${filePath}`);
         }
