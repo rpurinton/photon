@@ -8,6 +8,7 @@ function loadConfig() {
     const configPath = "/etc/photon/photon.json";
     const rawConfig = fs.readFileSync(configPath);
     config = JSON.parse(rawConfig);
+    return config; // return the parsed config
 }
 
 function getHomeForHost(host) {
