@@ -3,6 +3,8 @@
         {
             "domain": "example.com, *.example.com",
             "home": "/var/www/example.com/",
+            "cert": "path/to/example.com.crt",
+            "key": "path/to/example.com.key",
             "env": {
                 "VAR1": "value1",
                 "VAR2": "value2"
