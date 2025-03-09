@@ -13,28 +13,23 @@ function executePhp(filePath, req, res, startTime) {
     //console.log("Starting PHP-CGI execution for:", filePath);
 
     let env = Object.assign({}, process.env);
-
-    // Standard CGI/Apache variables
     env.REQUEST_METHOD = req.method;
     env.QUERY_STRING = url.parse(req.url).query || "";
     env.DOCUMENT_ROOT = require("path").dirname(filePath);
     env.SCRIPT_FILENAME = filePath;
     env.SCRIPT_NAME = req.url;
-    env.REQUEST_URI = req.url;
-    env.PATH_INFO = req.url; // You might separate PATH_INFO if needed
     env.SERVER_NAME = req.headers.host ? req.headers.host.split(":")[0] : "localhost";
     env.SERVER_PORT = process.env.PHOTON_PORT || "80";
     env.SERVER_PROTOCOL = "HTTP/1.1";
     // Set REDIRECT_STATUS to satisfy force-cgi-redirect.
     env.REDIRECT_STATUS = "200";
-
-    // Basic network and server info
     env.HTTP_HOST = req.headers.host;
     env.REMOTE_ADDR = req.socket.remoteAddress;
     env.REMOTE_PORT = req.socket.remotePort;
-    env.SERVER_ADDR = req.socket.localAddress || "127.0.0.1"; // Added to emulate Apache
     env.SERVER_SOFTWARE = "Photon";
     env.GATEWAY_INTERFACE = "CGI/1.1";
+    env.REQUEST_URI = req.url;
+    env.PATH_INFO = req.url;
 
     // Set content-type/length if provided.
     if (req.headers["content-type"]) {
@@ -44,12 +39,7 @@ function executePhp(filePath, req, res, startTime) {
         env.CONTENT_LENGTH = req.headers["content-length"];
     }
 
-    // Pass through the Authorization header if present.
-    if (req.headers.authorization) {
-        env.HTTP_AUTHORIZATION = req.headers.authorization;
-    }
-
-    // Copy any additional request headers into the CGI environment.
+    // Copy remaining request headers into the CGI environment.
     for (let header in req.headers) {
         const headerName = "HTTP_" + header.toUpperCase().replace(/-/g, "_");
         // Avoid overriding ones we set explicitly.
