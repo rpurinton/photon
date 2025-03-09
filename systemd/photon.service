@@ -1,14 +1,14 @@
 [Unit]
-Description=Photon Aggregate Service
-Requires=photon.target
-PartOf=photon.target
-After=network.target photon.target
+Description=Aggregated Photon Instances (ports 81, 82, 83, 84)
+Wants=photon@81.service photon@82.service photon@83.service photon@84.service
+After=network.target
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/bin/true
-ExecReload=/bin/systemctl reload photon@81 photon@82 photon@83 photon@84
+ExecReload=/bin/systemctl reload photon@81.service photon@82.service photon@83.service photon@84.service
+ExecStop=/bin/systemctl stop photon@81.service photon@82.service photon@83.service photon@84.service
 
 [Install]
 WantedBy=multi-user.target
