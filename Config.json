@@ -2,7 +2,7 @@
     "domains": [
         {
             "domain": "dev.purinton.us",
-            "home": "/usr/src/rpurinton/dev.purinton.us"
+            "home": "/usr/src/rpurinton/photon/dev.purinton.us/"
         }
     ]
 }
