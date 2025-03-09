@@ -6,7 +6,7 @@ const { loadConfig } = require("./config");
 const { handleRequest } = require("./router");
 const { logError } = require("./logger");
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PHOTON_PORT || 80;
 
 const server = http.createServer(handleRequest);
 
