@@ -5,8 +5,9 @@ After=network.target
 [Service]
 Environment=PHOTON_PORT=%i
 ExecStart=/usr/src/rpurinton/photon/bin/photon.js
+ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
-type=simple
+Type=simple
 
 [Install]
 WantedBy=multi-user.target
