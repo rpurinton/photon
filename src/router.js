@@ -89,13 +89,6 @@ function serveFile(filePath, req, res, startTime) {
         logAccess(formatAccessLog(req, res.statusCode, 0, startTime));
         return;
     }
-    // also dont serve user.ini files
-    if (path.basename(filePath).toLowerCase().contains("user.ini")) {
-        //console.log("Forbidden access to user.ini:", filePath);
-        sendError(req, res, 403, "Forbidden");
-        logAccess(formatAccessLog(req, res.statusCode, 0, startTime));
-        return;
-    }
 
     const ext = path.extname(filePath).toLowerCase();
     if (ext === ".php") {
