@@ -5,7 +5,7 @@ const path = require("path");
 let config = null;
 
 function loadConfig() {
-    const configPath = path.join(__dirname, "..", "photon.json");
+    const configPath = "/etc/photon/photon.json";
     const rawConfig = fs.readFileSync(configPath);
     config = JSON.parse(rawConfig);
 }
