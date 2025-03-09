@@ -1,0 +1,7 @@
+[Unit]
+Description=Photon Webserver Target
+Wants=photon@81 photon@82 photon@83 photon@84
+After=network.target
+
+[Install]
+WantedBy=multi-user.target

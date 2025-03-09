@@ -1,6 +1,7 @@
 [Unit]
 Description=Photon Port %i
 After=network.target
+PartOf=photon.target
 
 [Service]
 Environment=PHOTON_PORT=%i
