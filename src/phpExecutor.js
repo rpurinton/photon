@@ -4,7 +4,7 @@
 const { spawn } = require("child_process");
 const url = require("url");
 const { logError, logAccess } = require("./logger");
-const PHP_BIN = "/usr/bin/php"; // Change if needed
+const PHP_BIN = "/usr/bin/php-cgi"; // Change if needed
 
 // Execute the PHP file by spawning the PHP process.
 // Pipes request data into PHP and send the PHP output to the response.
