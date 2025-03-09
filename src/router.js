@@ -18,7 +18,7 @@ const IDLE_TIMEOUT_MS = 55 * 1000;
 function handleRequest(req, res) {
     //console.log("Handling request for:", req.url);
     req.socket.setTimeout(IDLE_TIMEOUT_MS, () => {
-        logError(`Idle timeout for ${req.socket.remoteAddress}`);
+        //logError(`Idle timeout for ${req.socket.remoteAddress}`);
         req.destroy();
     });
 
