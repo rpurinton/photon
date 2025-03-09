@@ -10,7 +10,7 @@ const PHP_BIN = "/usr/bin/php-cgi"; // Change if needed
 // Execute the PHP file by spawning the PHP CGI process.
 // Pipes request data into PHP and sends the PHP output to the response.
 function executePhp(filePath, req, res, startTime) {
-    console.log("Starting PHP-CGI execution for:", filePath);
+    //console.log("Starting PHP-CGI execution for:", filePath);
 
     let env = Object.assign({}, process.env);
     env.REQUEST_METHOD = req.method;
@@ -30,7 +30,7 @@ function executePhp(filePath, req, res, startTime) {
         env[headerName] = req.headers[header];
     }
 
-    console.log("Environment variables set:", env);
+    //console.log("Environment variables set:", env);
 
     let php = spawn(PHP_BIN, [], { env });
 
@@ -40,7 +40,7 @@ function executePhp(filePath, req, res, startTime) {
     let headersSent = false;
 
     php.stdout.on("data", (data) => {
-        console.log("PHP-CGI stdout data received:", data.toString());
+        //console.log("PHP-CGI stdout data received:", data.toString());
         if (!headersSent) {
             headerBuffer += data.toString();
             let headerEnd = headerBuffer.indexOf("\r\n\r\n");
@@ -57,12 +57,12 @@ function executePhp(filePath, req, res, startTime) {
                         let hName = parts[0].trim();
                         let hValue = parts.slice(1).join(":").trim();
                         res.setHeader(hName, hValue);
-                        console.log(`Header set: ${hName} = ${hValue}`);
+                        //console.log(`Header set: ${hName} = ${hValue}`);
                     }
                 }
                 res.write(remaining);
                 headersSent = true;
-                console.log("Headers sent to response.");
+                //console.log("Headers sent to response.");
             }
         } else {
             res.write(data);
@@ -71,28 +71,28 @@ function executePhp(filePath, req, res, startTime) {
 
     php.stdout.on("end", () => {
         if (!headersSent && headerBuffer.length > 0) {
-            console.log("No header terminator found. Sending accumulated output as body.");
+            //console.log("No header terminator found. Sending accumulated output as body.");
             res.write(headerBuffer);
         }
-        console.log("PHP-CGI stdout end.");
+        //console.log("PHP-CGI stdout end.");
         res.end();
         logAccess(require("./utils").formatAccessLog(req, res.statusCode, 0, startTime));
     });
 
     php.stderr.on("data", (data) => {
-        console.error(`PHP-CGI error (${filePath}): ${data}`);
+        //console.error(`PHP-CGI error (${filePath}): ${data}`);
         logError(`PHP-CGI error (${filePath}): ${data}`);
     });
 
     php.on("error", (err) => {
-        console.error(`Error executing PHP-CGI: ${err}`);
+        //console.error(`Error executing PHP-CGI: ${err}`);
         const { sendError } = require("./utils");
         sendError(req, res, 500, "PHP Execution Error");
         logError(`Error executing PHP-CGI: ${err}`);
     });
 
     php.on("close", (code) => {
-        console.log(`PHP-CGI process closed with code ${code}`);
+        //console.log(`PHP-CGI process closed with code ${code}`);
         if (code !== 0) {
             logError(`PHP-CGI exited with code ${code} for ${filePath}`);
         }
