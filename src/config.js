@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const { logError } = require("./logger");
 
-const CONFIG_PATH = path.join(__dirname, "../config/Photon.json");
+const CONFIG_PATH = path.join(__dirname, "/etc/photon/photon.json");
 
 let config = null;
 

@@ -1,0 +1,12 @@
+{
+    "domains": [
+        {
+            "domain": "example.com",
+            "home": "/var/www/example.com/"
+        },
+        {
+            "domain": "*.example.com",
+            "home": "/var/www/example.com/"
+        }
+    ]
+}
