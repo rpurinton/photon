@@ -95,22 +95,36 @@ function serveFile(filePath, req, res, startTime) {
         //console.log("Executing PHP file:", filePath);
         executePhp(filePath, req, res, startTime);
     } else {
+        // Define a mapping object for content types.
+        const contentTypeMap = {
+            ".html": "text/html",
+            ".htm": "text/html",
+            ".css": "text/css",
+            ".js": "application/javascript",
+            ".json": "application/json",
+            ".svg": "image/svg+xml",
+            ".png": "image/png",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".gif": "image/gif",
+            ".ico": "image/x-icon",
+            ".webp": "image/webp",
+            ".woff": "application/font-woff",
+            ".woff2": "application/font-woff2",
+            ".ttf": "application/font-sfnt",
+            ".otf": "application/font-sfnt",
+            ".eot": "application/vnd.ms-fontobject"
+        };
+
         //console.log("Streaming file:", filePath);
         const stream = fs.createReadStream(filePath);
         stream.on("open", () => {
-            //console.log("File stream opened:", filePath);
-            // Set a basic content type.
+            // Set content type using the mapping.
             if (!res.getHeader("Content-Type")) {
-                if (ext === ".html" || ext === ".htm") {
-                    res.setHeader("Content-Type", "text/html");
-                } else if (ext === ".css") {
-                    res.setHeader("Content-Type", "text/css");
-                } else if (ext === ".js") {
-                    res.setHeader("Content-Type", "application/javascript");
-                } else {
-                    res.setHeader("Content-Type", "application/octet-stream");
-                }
+                res.setHeader("Content-Type", contentTypeMap[ext] || "application/octet-stream");
             }
+            // Force connection close after response.
+            res.setHeader("Connection", "close");
             stream.pipe(res);
         });
         stream.on("error", (err) => {
