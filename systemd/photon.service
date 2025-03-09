@@ -1,12 +1,14 @@
 [Unit]
 Description=Photon Aggregate Service
-Wants=photon.target
-After=network.target
+Requires=photon.target
+PartOf=photon.target
+After=network.target photon.target
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/bin/true
+ExecReload=/bin/systemctl reload photon@81 photon@82 photon@83 photon@84
 
 [Install]
 WantedBy=multi-user.target
