@@ -1,0 +1,12 @@
+[Unit]
+Description=Photon Port %i
+After=network.target
+
+[Service]
+SetEnvironment=PHOTON_PORT=%i
+ExecStart=/usr/src/rpurinton/photon/bin/photon.js
+Restart=always
+type=simple
+
+[Install]
+WantedBy=multi-user.target
