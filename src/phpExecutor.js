@@ -56,6 +56,7 @@ function executePhp(filePath, req, res, startTime) {
 
     let php = spawn(PHP_BIN, [], { env });
 
+    // Pipe the body (e.g. www‑encoded POST fields) so PHP can read it into $_POST
     req.pipe(php.stdin);
 
     let headerBuffer = "";
