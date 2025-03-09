@@ -51,7 +51,7 @@ const httpsOptions = {
 };
 
 // Only environment variable used now is PORT.
-const PORT = process.env.PORT || 443;
+const PORT = process.env.PHOTON_PORT || 443;
 const server = https.createServer(httpsOptions, handleRequest);
 
 server.listen(PORT, () => {
