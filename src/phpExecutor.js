@@ -13,21 +13,49 @@ function executePhp(filePath, req, res, startTime) {
     //console.log("Starting PHP-CGI execution for:", filePath);
 
     let env = Object.assign({}, process.env);
+
+    // Standard CGI/Apache variables
     env.REQUEST_METHOD = req.method;
     env.QUERY_STRING = url.parse(req.url).query || "";
     env.DOCUMENT_ROOT = require("path").dirname(filePath);
     env.SCRIPT_FILENAME = filePath;
     env.SCRIPT_NAME = req.url;
+    env.REQUEST_URI = req.url;
+    env.PATH_INFO = req.url; // You might separate PATH_INFO if needed
     env.SERVER_NAME = req.headers.host ? req.headers.host.split(":")[0] : "localhost";
-    env.SERVER_PORT = process.env.PHOTON_PORT || 80;
+    env.SERVER_PORT = process.env.PHOTON_PORT || "80";
     env.SERVER_PROTOCOL = "HTTP/1.1";
     // Set REDIRECT_STATUS to satisfy force-cgi-redirect.
     env.REDIRECT_STATUS = "200";
 
-    // Copy request headers into the CGI environment.
+    // Basic network and server info
+    env.HTTP_HOST = req.headers.host;
+    env.REMOTE_ADDR = req.socket.remoteAddress;
+    env.REMOTE_PORT = req.socket.remotePort;
+    env.SERVER_ADDR = req.socket.localAddress || "127.0.0.1"; // Added to emulate Apache
+    env.SERVER_SOFTWARE = "Photon";
+    env.GATEWAY_INTERFACE = "CGI/1.1";
+
+    // Set content-type/length if provided.
+    if (req.headers["content-type"]) {
+        env.CONTENT_TYPE = req.headers["content-type"];
+    }
+    if (req.headers["content-length"]) {
+        env.CONTENT_LENGTH = req.headers["content-length"];
+    }
+
+    // Pass through the Authorization header if present.
+    if (req.headers.authorization) {
+        env.HTTP_AUTHORIZATION = req.headers.authorization;
+    }
+
+    // Copy any additional request headers into the CGI environment.
     for (let header in req.headers) {
-        let headerName = "HTTP_" + header.toUpperCase().replace(/-/g, "_");
-        env[headerName] = req.headers[header];
+        const headerName = "HTTP_" + header.toUpperCase().replace(/-/g, "_");
+        // Avoid overriding ones we set explicitly.
+        if (!(headerName in env)) {
+            env[headerName] = req.headers[header];
+        }
     }
 
     //console.log("Environment variables set:", env);
