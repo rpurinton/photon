@@ -1,7 +1,7 @@
 [Unit]
 Description=Aggregated Photon Instances (ports 444, 445, 446, 447)
 Wants=photon@444.service photon@445.service photon@446.service photon@447.service
-After=network.target
+After=network.target remote-fs.target
 
 [Service]
 Type=oneshot
